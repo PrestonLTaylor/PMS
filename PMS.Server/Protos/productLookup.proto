@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option csharp_namespace = "PMS.Services.Product";
+
+import "Protos/product.proto";
+
+package ProductLookup;
+
+service ProductLookup {
+    rpc GetProduct(GetProductRequest) returns (Product.ProductInfo);
+}
+
+message GetProductRequest {
+    int32 id = 1;
+}
