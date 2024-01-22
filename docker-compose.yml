@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  pms.server:
+    image: ${DOCKER_REGISTRY-}pmsserver
+    build:
+      context: .
+      dockerfile: PMS.Server/Dockerfile
+    container_name: pms-server-container
+    ports:
+        - 80:80
+        - 443:443
+
+  seq:
+    image: datalust/seq
+    container_name: seq-container
+    volumes:
+        - seq-data:/data
+    environment:
+        # TODO: Setup a secured version of Seq
+        ACCEPT_EULA: Y
+    ports:
+        - 5050:80
+
+volumes:
+  seq-data:
