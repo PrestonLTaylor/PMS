@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using PMS.Server.Data.Mappers;
 using PMS.Server.Data.Repositories;
 using PMS.Services.Product;
 
@@ -23,14 +24,10 @@ internal sealed class ProductLookupService : ProductLookup.ProductLookupBase
             throw new RpcException(new Status(StatusCode.NotFound, $"Product with an id of {request.Id} was not found."));
         }
 
-        return Task.FromResult(new ProductInfo
-        {
-            Id = product.Value.Id,
-            Name = product.Value.Name,
-            Price = product.Value.Price,
-        });
+        return Task.FromResult(_mapper.ProductModelToInfo(product.Value));
     }
 
     private readonly IProductRepository _repo;
     private readonly ILogger<ProductLookupService> _logger;
+    private readonly ProductMapper _mapper = new();
 }
