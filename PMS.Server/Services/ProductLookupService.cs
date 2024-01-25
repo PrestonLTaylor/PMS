@@ -24,7 +24,7 @@ internal sealed class ProductLookupService : ProductLookup.ProductLookupBase
             throw new RpcException(new Status(StatusCode.NotFound, $"Product with an id of {request.Id} was not found."));
         }
 
-        return Task.FromResult(_mapper.ProductModelToInfo(product.Value));
+        return Task.FromResult(_mapper.ProductModelToInfo(product));
     }
 
     private readonly IProductRepository _repo;

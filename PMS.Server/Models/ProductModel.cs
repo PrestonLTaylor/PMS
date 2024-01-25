@@ -1,8 +1,12 @@
-﻿namespace PMS.Server.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
-internal struct ProductModel
+namespace PMS.Server.Models;
+
+internal class ProductModel
 {
+    [Key]
     public int Id { get; set; }
-    public string Name { get; set; }
+    // FIXME: Enforce a maximum string length
+    public required string Name { get; set; }
     public int Price { get; set; }
 }
