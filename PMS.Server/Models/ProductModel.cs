@@ -2,7 +2,7 @@
 
 namespace PMS.Server.Models;
 
-internal class ProductModel
+internal sealed class ProductModel
 {
     [Key]
     public int Id { get; set; }
