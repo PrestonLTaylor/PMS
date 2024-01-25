@@ -11,7 +11,7 @@ namespace PMS.Server.UnitTests;
 internal class ProductRepositoryTests
 {
     [Test]
-    public void GetProductById_ReturnsExpectedProduct_WhenSupliedExpectedIdOfProduct()
+    public void GetProductById_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
     {
         // Arrange
         const int expectedId = 1;
@@ -35,6 +35,24 @@ internal class ProductRepositoryTests
 
         // Assert
         Assert.That(response, Is.EqualTo(expectedProduct));
+    }
+
+    [Test]
+    public void GetProductById_ReturnsNull_WhenSuppliedInvalidId()
+    {
+        // Arrange
+        const int invalidId = 1;
+        var productData = new List<ProductModel>();
+
+        var productSetMock = CreateDbSetMock(productData.AsQueryable());
+        var contextMock = CreateDatabaseContextMock(productSetMock);
+        var service = new ProductRepository(contextMock.Object);
+
+        // Act
+        var response = service.GetProductById(invalidId);
+
+        // Assert
+        Assert.That(response, Is.Null);
     }
 
     private Mock<DbSet<T>> CreateDbSetMock<T>(IQueryable<T> setData) where T : class

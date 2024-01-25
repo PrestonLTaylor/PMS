@@ -11,7 +11,7 @@ namespace PMS.Server.UnitTests;
 internal sealed class ProductLookupServiceTests
 {
     [Test]
-    public void GetProduct_ReturnsExpectedProduct_WhenSupliedExpectedIdOfProduct()
+    public void GetProduct_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
     {
         // Arrange
         const int expectedId = 1;
@@ -40,7 +40,7 @@ internal sealed class ProductLookupServiceTests
     }
 
     [Test]
-    public void GetProduct_ThrowsRpcNotFoundException_WhenSupliedInvalidId()
+    public void GetProduct_ThrowsRpcNotFoundException_WhenSuppliedInvalidId()
     {
         // Arrange
         const int expectedId = 1;
