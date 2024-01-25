@@ -34,14 +34,7 @@ internal class ProductRepositoryTests
         var response = service.GetProductById(expectedId);
 
         // Assert
-        Assert.That(response, Is.Not.Null);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(response.Id, Is.EqualTo(expectedProduct.Id));
-            Assert.That(response.Name, Is.EqualTo(expectedProduct.Name));
-            Assert.That(response.Price, Is.EqualTo(expectedProduct.Price));
-        });
+        Assert.That(response, Is.EqualTo(expectedProduct));
     }
 
     private Mock<DbSet<T>> CreateDbSetMock<T>(IQueryable<T> setData) where T : class
