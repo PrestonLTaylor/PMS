@@ -22,3 +22,5 @@ app.UseSerilogRequestLogging();
 app.MapGrpcService<ProductLookupService>();
 
 app.Run();
+
+public partial class Program { }
