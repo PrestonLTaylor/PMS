@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PMS.Lib", "PMS.Lib\PMS.Lib.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PMS.Lib.UnitTests", "PMS.Lib.UnitTests\PMS.Lib.UnitTests.csproj", "{FE12F640-D105-4457-8024-34B122B0C04C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PMS.Client", "PMS.Client\PMS.Client.csproj", "{421DD00D-90AC-4100-B9DC-F38341CEF9CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,24 @@ Global
 		{FE12F640-D105-4457-8024-34B122B0C04C}.Release|x64.Build.0 = Release|Any CPU
 		{FE12F640-D105-4457-8024-34B122B0C04C}.Release|x86.ActiveCfg = Release|Any CPU
 		{FE12F640-D105-4457-8024-34B122B0C04C}.Release|x86.Build.0 = Release|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Debug|x64.Build.0 = Debug|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Debug|x86.Build.0 = Debug|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Debug|x86.Deploy.0 = Debug|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Release|x64.ActiveCfg = Release|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Release|x64.Build.0 = Release|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Release|x64.Deploy.0 = Release|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Release|x86.ActiveCfg = Release|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Release|x86.Build.0 = Release|Any CPU
+		{421DD00D-90AC-4100-B9DC-F38341CEF9CA}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
