@@ -3,9 +3,14 @@
     x:Class="PMS.Client.Views.MainMenu"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:PMS.Client.Converters"
     xmlns:viewmodel="clr-namespace:PMS.Client.ViewModels"
     Title="Product Lookup By Id"
     x:DataType="viewmodel:MainMenuViewModel">
+
+    <ContentPage.Resources>
+        <converters:PriceToStringConverter x:Key="priceToString" />
+    </ContentPage.Resources>
 
     <Grid
         Padding="15"
@@ -20,7 +25,7 @@
         </Frame>
 
         <Frame Grid.Column="1" CornerRadius="0">
-            <Label Text="{Binding CurrentProduct.Price, StringFormat='Price = {0}'}" VerticalOptions="Center" />
+            <Label Text="{Binding CurrentProduct.Price, StringFormat='Price = {0}', Converter={StaticResource priceToString}}" VerticalOptions="Center" />
         </Frame>
 
         <Frame
