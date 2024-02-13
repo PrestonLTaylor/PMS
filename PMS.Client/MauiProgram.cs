@@ -25,7 +25,9 @@ public static class MauiProgram
         SetupPMSServices(builder);
 
         builder.Services.AddTransient<MainMenuViewModel>();
+        builder.Services.AddTransient<ProductLookupByIdViewModel>();
 
+        builder.Services.AddTransient<ProductLookupById>();
         builder.Services.AddTransient<MainMenu>();
 
 #if DEBUG
