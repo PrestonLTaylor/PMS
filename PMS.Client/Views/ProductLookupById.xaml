@@ -17,21 +17,18 @@
         ColumnDefinitions="*, *"
         RowDefinitions="Auto, Auto, *, Auto">
 
-        <Frame CornerRadius="0">
+        <Frame>
             <Entry
                 Keyboard="Numeric"
                 Placeholder="Enter Id"
                 Text="{Binding IdToLookup}" />
         </Frame>
 
-        <Frame Grid.Column="1" CornerRadius="0">
+        <Frame Grid.Column="1">
             <Label Text="{Binding CurrentProduct.Price, StringFormat='Price = {0}', Converter={StaticResource priceToString}}" VerticalOptions="Center" />
         </Frame>
 
-        <Frame
-            Grid.Row="1"
-            Grid.ColumnSpan="2"
-            CornerRadius="0">
+        <Frame Grid.Row="1" Grid.ColumnSpan="2">
             <Label
                 HorizontalOptions="Center"
                 Text="{Binding CurrentProduct.Name, StringFormat='Name = {0}'}"
