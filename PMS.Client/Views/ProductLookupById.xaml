@@ -42,7 +42,6 @@
             Grid.Row="3"
             Grid.ColumnSpan="2"
             Command="{Binding GetProductByIdCommand}"
-            CornerRadius="0"
             IsEnabled="{Binding IsNotBusy}"
             Text="Search" />
 

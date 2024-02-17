@@ -8,15 +8,12 @@
     x:DataType="viewmodel:MainMenuViewModel">
     <Grid
         Padding="20"
-        ColumnDefinitions="*, *"
+        ColumnDefinitions="Auto, *, Auto, *, Auto"
         RowDefinitions="*">
         <Button
+            Grid.Column="1"
             Command="{Binding GoToProductLookupByIdCommand}"
-            CornerRadius="0"
-            HeightRequest="125"
-            LineBreakMode="WordWrap"
-            Text="Product Lookup By Id"
-            VerticalOptions="Start"
-            WidthRequest="125" />
+            Style="{StaticResource GridButton}"
+            Text="Product Lookup By Id" />
     </Grid>
 </ContentPage>

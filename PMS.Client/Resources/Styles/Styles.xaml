@@ -26,7 +26,7 @@
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="CornerRadius" Value="0" />
         <Setter Property="Padding" Value="14,10" />
         <Setter Property="MinimumHeightRequest" Value="44" />
         <Setter Property="MinimumWidthRequest" Value="44" />
@@ -43,6 +43,13 @@
                 </VisualStateGroup>
             </VisualStateGroupList>
         </Setter>
+    </Style>
+
+    <Style x:Key="GridButton" TargetType="Button">
+        <Setter Property="WidthRequest" Value="125" />
+        <Setter Property="HeightRequest" Value="125" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
+        <Setter Property="VerticalOptions" Value="Start" />
     </Style>
 
     <Style TargetType="CheckBox">
