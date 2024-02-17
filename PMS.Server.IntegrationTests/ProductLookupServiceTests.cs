@@ -2,6 +2,7 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -75,8 +76,14 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
 
     private GrpcChannel CreateGrpcChannel(Action<IServiceCollection> configureTestServices)
     {
+        // FIXME/NOTE: We need this testing config to set our environment to testing so we don't run our database seeding code
+        var testingConfig = new ConfigurationBuilder()
+            .AddCommandLine(new string[] { "--environment", "Testing" })
+            .Build();
+
         var testClient = Factory.WithWebHostBuilder(builder =>
         {
+            builder.UseConfiguration(testingConfig);
             builder.ConfigureTestServices(configureTestServices);
             builder.ConfigureLogging(config =>
             {

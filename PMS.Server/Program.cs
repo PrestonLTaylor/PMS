@@ -17,6 +17,11 @@ builder.Host.UseSerilog((hostingContext, config) =>
 
 var app = builder.Build();
 
+if (builder.Environment.IsDevelopment())
+{
+    await app.Services.AddDatabaseSeeding();
+}
+
 app.UseSerilogRequestLogging();
 
 app.MapGrpcService<ProductLookupService>();
