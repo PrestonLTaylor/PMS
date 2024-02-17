@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PMS.Client.Views.MainMenu"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:PMS.Client.ViewModels"
+    Title="Main Menu"
+    x:DataType="viewmodel:MainMenuViewModel">
+    <Grid
+        Padding="20"
+        ColumnDefinitions="Auto, *, Auto, *, Auto"
+        RowDefinitions="*">
+        <Button
+            Grid.Column="1"
+            Command="{Binding GoToProductLookupByIdCommand}"
+            Style="{StaticResource GridButton}"
+            Text="Product Lookup By Id" />
+    </Grid>
+</ContentPage>

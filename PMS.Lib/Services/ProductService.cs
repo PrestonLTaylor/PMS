@@ -12,6 +12,7 @@ internal sealed class ProductService : IProductService
         _productLookupClient = productLookupClient;
     }
 
+    // TODO: Return a discriminated union so consumers can use actual errors instead of just returning null
     public async Task<Product?> GetProductByIdAsync(int id)
     {
         ProductInfo response;
@@ -21,7 +22,6 @@ internal sealed class ProductService : IProductService
         }
         catch (RpcException)
         {
-            // TODO: Introduce logging for the client
             return null;
         }
 
