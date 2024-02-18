@@ -78,7 +78,7 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
     {
         // FIXME/NOTE: We need this testing config to set our environment to testing so we don't run our database seeding code
         var testingConfig = new ConfigurationBuilder()
-            .AddCommandLine(new string[] { "--environment", "Testing" })
+            .AddCommandLine(["--environment", "Testing" ])
             .Build();
 
         var testClient = Factory.WithWebHostBuilder(builder =>
