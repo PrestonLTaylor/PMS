@@ -18,7 +18,7 @@ internal sealed class ProductService : IProductService
         ProductInfo response;
         try
         {
-            response = await _productLookupClient.GetProductAsync(new GetProductRequest { Id = id });
+            response = await _productLookupClient.GetProductByIdAsync(new GetProductByIdRequest { Id = id });
         }
         catch (RpcException)
         {

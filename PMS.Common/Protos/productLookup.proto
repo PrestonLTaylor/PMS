@@ -7,9 +7,9 @@ import "Protos/product.proto";
 package ProductLookup;
 
 service ProductLookup {
-    rpc GetProduct(GetProductRequest) returns (Product.ProductInfo);
+    rpc GetProductById(GetProductByIdRequest) returns (Product.ProductInfo);
 }
 
-message GetProductRequest {
+message GetProductByIdRequest {
     int32 id = 1;
 }

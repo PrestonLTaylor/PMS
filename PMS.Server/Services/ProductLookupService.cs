@@ -13,7 +13,7 @@ internal sealed class ProductLookupService : ProductLookup.ProductLookupBase
         _logger = logger;
     }
 
-    public override Task<ProductInfo> GetProduct(GetProductRequest request, ServerCallContext context)
+    public override Task<ProductInfo> GetProductById(GetProductByIdRequest request, ServerCallContext context)
     {
         _logger.LogInformation("Product with an id of {Id} was requested.", request.Id);
 

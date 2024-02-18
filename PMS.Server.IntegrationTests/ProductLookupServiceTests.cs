@@ -35,11 +35,11 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
             services.AddSingleton(mockProductRepo.Object);
         });
 
-        var request = new GetProductRequest { Id = expectedId };
+        var request = new GetProductByIdRequest { Id = expectedId };
         var client = new ProductLookup.ProductLookupClient(channel);
 
         // Act
-        var response = client.GetProduct(request);
+        var response = client.GetProductById(request);
 
         // Assert
         Assert.Multiple(() =>
@@ -63,13 +63,13 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
             services.AddSingleton(mockProductRepo.Object);
         });
 
-        var request = new GetProductRequest { Id = invalidId };
+        var request = new GetProductByIdRequest { Id = invalidId };
         var client = new ProductLookup.ProductLookupClient(channel);
 
         // Act
 
         // Assert
-        var exception = Assert.Throws<RpcException>(() => client.GetProduct(request));
+        var exception = Assert.Throws<RpcException>(() => client.GetProductById(request));
 
         Assert.That(exception.StatusCode, Is.EqualTo(StatusCode.NotFound));
     }

@@ -22,7 +22,7 @@ internal sealed class ProductServiceTests
 
         var grpcResponse = CallHelpers.CreateResponse(expectedProduct);
         var productLookupMock = new Mock<ProductLookup.ProductLookupClient>();
-        productLookupMock.Setup(m => m.GetProductAsync(new GetProductRequest { Id = expectedId }, null, null, default)).Returns(grpcResponse);
+        productLookupMock.Setup(m => m.GetProductByIdAsync(new GetProductByIdRequest { Id = expectedId }, null, null, default)).Returns(grpcResponse);
 
         var repo = new ProductService(productLookupMock.Object);
 
@@ -47,7 +47,7 @@ internal sealed class ProductServiceTests
 
         var grpcResponse = CallHelpers.CreateResponse<ProductInfo>(StatusCode.NotFound);
         var productLookupMock = new Mock<ProductLookup.ProductLookupClient>();
-        productLookupMock.Setup(m => m.GetProductAsync(new GetProductRequest { Id = invalidId }, null, null, default)).Returns(grpcResponse);
+        productLookupMock.Setup(m => m.GetProductByIdAsync(new GetProductByIdRequest { Id = invalidId }, null, null, default)).Returns(grpcResponse);
 
         var repo = new ProductService(productLookupMock.Object);
 

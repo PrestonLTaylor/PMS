@@ -28,7 +28,7 @@ internal sealed class ProductLookupServiceTests
         var service = new ProductLookupService(repoMock.Object, NullLogger<ProductLookupService>.Instance);
 
         // Act
-        var response = service.GetProduct(new GetProductRequest { Id = expectedId }, null!).Result;
+        var response = service.GetProductById(new GetProductByIdRequest { Id = expectedId }, null!).Result;
 
         // Assert
         Assert.Multiple(() =>
@@ -53,7 +53,7 @@ internal sealed class ProductLookupServiceTests
         // Act
 
         // Assert
-        var exception = Assert.Throws<RpcException>(() => service.GetProduct(new GetProductRequest { Id = expectedId }, null!));
+        var exception = Assert.Throws<RpcException>(() => service.GetProductById(new GetProductByIdRequest { Id = expectedId }, null!));
 
         Assert.That(exception.StatusCode, Is.EqualTo(StatusCode.NotFound));
     }
