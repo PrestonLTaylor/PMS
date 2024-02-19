@@ -69,6 +69,73 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
         Assert.That(exception.StatusCode, Is.EqualTo(StatusCode.NotFound));
     }
 
+    [Test]
+    public async Task GetProductsByPartialName_ReturnsSpecifiedProducts_WhenRepoReturnsSameProducts()
+    {
+        // Arrange
+        const string partialProductName = "Bread";
+        var expectedProduct = new ProductModel
+        {
+            Id = 1,
+            Name = "Brown " + partialProductName,
+            Price = 100
+        };
+        var productData = new List<ProductModel>()
+        {
+            expectedProduct,
+        };
+
+        var mockProductRepo = new Mock<IProductRepository>();
+        mockProductRepo.Setup(m => m.GetProductsByPartialName(partialProductName)).Returns(productData);
+
+        var channel = CreateGrpcChannel(services =>
+        {
+            services.AddSingleton(mockProductRepo.Object);
+        });
+
+        var request = new GetProductsByPartialNameRequest { PartialName = partialProductName };
+        var client = new ProductLookup.ProductLookupClient(channel);
+
+        // Act
+        var response = client.GetProductsByPartialName(request);
+        var actualProducts = await response.ResponseStream.ReadAllAsync().ToListAsync();
+
+        // Assert
+        Assert.That(response.GetStatus(), Is.EqualTo(Status.DefaultSuccess));
+        Assert.That(actualProducts, Has.Count.EqualTo(1));
+
+        var actualProduct = actualProducts[0];
+        Assert.That(actualProduct, Is.EqualTo(expectedProduct));
+    }
+
+    // NOTE: This test is to make sure we don't throw a NotFound GrpcException
+    [Test]
+    public async Task GetProductsByPartialName_ReturnsAnEmptyProductList_WhenSuppliedInvalidName()
+    {
+        // Arrange
+        const string invalidName = "Name";
+        var productData = new List<ProductModel>();
+
+        var mockProductRepo = new Mock<IProductRepository>();
+        mockProductRepo.Setup(m => m.GetProductsByPartialName(invalidName)).Returns(productData);
+
+        var channel = CreateGrpcChannel(services =>
+        {
+            services.AddSingleton(mockProductRepo.Object);
+        });
+
+        var request = new GetProductsByPartialNameRequest { PartialName = invalidName };
+        var client = new ProductLookup.ProductLookupClient(channel);
+
+        // Act
+        var response = client.GetProductsByPartialName(request);
+        var actualProducts = await response.ResponseStream.ReadAllAsync().ToListAsync();
+
+        // Assert
+        Assert.That(response.GetStatus(), Is.EqualTo(Status.DefaultSuccess));
+        Assert.That(actualProducts, Has.Count.EqualTo(0));
+    }
+
     private GrpcChannel CreateGrpcChannel(Action<IServiceCollection> configureTestServices)
     {
         // FIXME/NOTE: We need this testing config to set our environment to testing so we don't run our database seeding code
