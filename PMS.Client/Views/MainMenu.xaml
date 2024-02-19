@@ -15,5 +15,11 @@
             Command="{Binding GoToProductLookupByIdCommand}"
             Style="{StaticResource GridButton}"
             Text="Product Lookup By Id" />
+
+        <Button
+            Grid.Column="3"
+            Command="{Binding GoToProductLookupByNameCommand}"
+            Style="{StaticResource GridButton}"
+            Text="Product Lookup By Name" />
     </Grid>
 </ContentPage>
