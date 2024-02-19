@@ -15,5 +15,10 @@ internal sealed class ProductRepository : IProductRepository
         return _context.Products.FirstOrDefault(p => p.Id == id);
     }
 
+    public IReadOnlyList<ProductModel> GetProductsByPartialName(string partialName)
+    {
+        return _context.Products.Where(p => p.Name.Contains(partialName)).ToList();
+    }
+
     private readonly DatabaseContext _context;
 }

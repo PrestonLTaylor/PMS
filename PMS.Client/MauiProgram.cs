@@ -26,8 +26,10 @@ public static class MauiProgram
 
         builder.Services.AddTransient<MainMenuViewModel>();
         builder.Services.AddTransient<ProductLookupByIdViewModel>();
+        builder.Services.AddTransient<ProductLookupByNameViewModel>();
 
         builder.Services.AddTransient<ProductLookupById>();
+        builder.Services.AddTransient<ProductLookupByName>();
         builder.Services.AddTransient<MainMenu>();
 
 #if DEBUG

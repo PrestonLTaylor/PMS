@@ -3,7 +3,7 @@ using PMS.Lib.Services;
 
 namespace PMS.Client.ViewModels;
 
-public partial class ProductLookupByIdViewModel : BaseViewModel
+public sealed class ProductLookupByIdViewModel : BaseViewModel
 {
     public ProductLookupByIdViewModel(IProductService productService)
     {

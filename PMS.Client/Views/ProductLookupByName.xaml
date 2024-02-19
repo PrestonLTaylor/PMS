@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PMS.Client.Views.ProductLookupByName"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:PMS.Client.Converters"
+    xmlns:model="clr-namespace:PMS.Lib.Data;assembly=PMS.Lib"
+    xmlns:viewmodel="clr-namespace:PMS.Client.ViewModels"
+    Title="Product Lookup By Name"
+    x:DataType="viewmodel:ProductLookupByNameViewModel">
+
+    <ContentPage.Resources>
+        <converters:PriceToStringConverter x:Key="priceToString" />
+    </ContentPage.Resources>
+
+    <Grid Padding="15" RowDefinitions="Auto, Auto, *, Auto">
+        <Frame>
+            <Entry Placeholder="Enter Product Name" Text="{Binding PartialProductName}" />
+        </Frame>
+
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding Products}"
+            SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Product">
+                    <Grid ColumnDefinitions="*, *">
+                        <Frame>
+                            <Label Text="{Binding Name, StringFormat='Name = {0}'}" VerticalOptions="Center" />
+                        </Frame>
+
+                        <Frame Grid.Column="1">
+                            <Label Text="{Binding Price, StringFormat='Price = {0}', Converter={StaticResource priceToString}}" VerticalOptions="Center" />
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+        <Button
+            Grid.Row="3"
+            Command="{Binding GetProductsByNameCommand}"
+            IsEnabled="{Binding IsNotBusy}"
+            Text="Search" />
+
+        <ActivityIndicator
+            Grid.RowSpan="4"
+            HorizontalOptions="FillAndExpand"
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}"
+            VerticalOptions="CenterAndExpand" />
+    </Grid>
+</ContentPage>

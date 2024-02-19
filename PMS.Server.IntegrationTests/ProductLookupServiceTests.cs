@@ -16,7 +16,7 @@ namespace PMS.Server.IntegrationTests;
 internal sealed class ProductLookupServiceTests : IntegrationTestBase
 {
     [Test]
-    public void GetProduct_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
+    public void GetProductById_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
     {
         // Arrange
         const int expectedId = 1;
@@ -35,23 +35,18 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
             services.AddSingleton(mockProductRepo.Object);
         });
 
-        var request = new GetProductRequest { Id = expectedId };
+        var request = new GetProductByIdRequest { Id = expectedId };
         var client = new ProductLookup.ProductLookupClient(channel);
 
         // Act
-        var response = client.GetProduct(request);
+        var response = client.GetProductById(request);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(response.Id, Is.EqualTo(expectedProduct.Id));
-            Assert.That(response.Name, Is.EqualTo(expectedProduct.Name));
-            Assert.That(response.Price, Is.EqualTo(expectedProduct.Price));
-        });
+        Assert.That(response, Is.EqualTo(expectedProduct));
     }
 
     [Test]
-    public void GetProduct_ThrowsRpcNotFoundException_WhenSuppliedInvalidIdOfProduct()
+    public void GetProductById_ThrowsRpcNotFoundException_WhenSuppliedInvalidIdOfProduct()
     {
         // Arrange
         const int invalidId = 1;
@@ -63,15 +58,82 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
             services.AddSingleton(mockProductRepo.Object);
         });
 
-        var request = new GetProductRequest { Id = invalidId };
+        var request = new GetProductByIdRequest { Id = invalidId };
         var client = new ProductLookup.ProductLookupClient(channel);
 
         // Act
 
         // Assert
-        var exception = Assert.Throws<RpcException>(() => client.GetProduct(request));
+        var exception = Assert.Throws<RpcException>(() => client.GetProductById(request));
 
         Assert.That(exception.StatusCode, Is.EqualTo(StatusCode.NotFound));
+    }
+
+    [Test]
+    public async Task GetProductsByPartialName_ReturnsSpecifiedProducts_WhenRepoReturnsSameProducts()
+    {
+        // Arrange
+        const string partialProductName = "Bread";
+        var expectedProduct = new ProductModel
+        {
+            Id = 1,
+            Name = "Brown " + partialProductName,
+            Price = 100
+        };
+        var productData = new List<ProductModel>()
+        {
+            expectedProduct,
+        };
+
+        var mockProductRepo = new Mock<IProductRepository>();
+        mockProductRepo.Setup(m => m.GetProductsByPartialName(partialProductName)).Returns(productData);
+
+        var channel = CreateGrpcChannel(services =>
+        {
+            services.AddSingleton(mockProductRepo.Object);
+        });
+
+        var request = new GetProductsByPartialNameRequest { PartialName = partialProductName };
+        var client = new ProductLookup.ProductLookupClient(channel);
+
+        // Act
+        var response = client.GetProductsByPartialName(request);
+        var actualProducts = await response.ResponseStream.ReadAllAsync().ToListAsync();
+
+        // Assert
+        Assert.That(response.GetStatus(), Is.EqualTo(Status.DefaultSuccess));
+        Assert.That(actualProducts, Has.Count.EqualTo(1));
+
+        var actualProduct = actualProducts[0];
+        Assert.That(actualProduct, Is.EqualTo(expectedProduct));
+    }
+
+    // NOTE: This test is to make sure we don't throw a NotFound GrpcException
+    [Test]
+    public async Task GetProductsByPartialName_ReturnsAnEmptyProductList_WhenSuppliedInvalidName()
+    {
+        // Arrange
+        const string invalidName = "Name";
+        var productData = new List<ProductModel>();
+
+        var mockProductRepo = new Mock<IProductRepository>();
+        mockProductRepo.Setup(m => m.GetProductsByPartialName(invalidName)).Returns(productData);
+
+        var channel = CreateGrpcChannel(services =>
+        {
+            services.AddSingleton(mockProductRepo.Object);
+        });
+
+        var request = new GetProductsByPartialNameRequest { PartialName = invalidName };
+        var client = new ProductLookup.ProductLookupClient(channel);
+
+        // Act
+        var response = client.GetProductsByPartialName(request);
+        var actualProducts = await response.ResponseStream.ReadAllAsync().ToListAsync();
+
+        // Assert
+        Assert.That(response.GetStatus(), Is.EqualTo(Status.DefaultSuccess));
+        Assert.That(actualProducts, Has.Count.EqualTo(0));
     }
 
     private GrpcChannel CreateGrpcChannel(Action<IServiceCollection> configureTestServices)

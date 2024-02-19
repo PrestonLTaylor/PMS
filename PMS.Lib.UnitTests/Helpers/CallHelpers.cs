@@ -25,4 +25,36 @@ internal static class CallHelpers
             () => new Metadata(),
             () => { });
     }
+
+    public static AsyncServerStreamingCall<TResponse> CreateStreamingResponse<TResponse>(List<TResponse> response)
+    {
+        var mockedAsyncStreamReader = new MockedAsyncStreamReader<TResponse>(response);
+        return new AsyncServerStreamingCall<TResponse>(
+            mockedAsyncStreamReader,
+            Task.FromResult(new Metadata()),
+            () => Status.DefaultSuccess,
+            () => new Metadata(),
+            () => { });
+    }
 }
+
+// NOTE: Used for mocking grpc calls that return a stream of data
+internal class MockedAsyncStreamReader<T> : IAsyncStreamReader<T>
+{
+    public MockedAsyncStreamReader(List<T> values)
+    {
+        _values = values;
+    }
+
+    public T Current => _values[_index];
+
+    public Task<bool> MoveNext(CancellationToken cancellationToken)
+    {
+        ++_index;
+        return Task.FromResult(_index < _values.Count);
+    }
+
+    private readonly List<T> _values;
+    private int _index = -1;
+}
+
