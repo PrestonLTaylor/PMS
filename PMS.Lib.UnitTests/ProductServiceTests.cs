@@ -31,12 +31,7 @@ internal sealed class ProductServiceTests
 
         // Assert
         Assert.That(response, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(response.Id, Is.EqualTo(expectedProduct.Id));
-            Assert.That(response.Name, Is.EqualTo(expectedProduct.Name));
-            Assert.That(response.Price, Is.EqualTo(expectedProduct.Price));
-        });
+        Assert.That(response, Is.EqualTo(expectedProduct));
     }
 
     [Test]
@@ -89,12 +84,7 @@ internal sealed class ProductServiceTests
         Assert.That(response, Has.Count.EqualTo(1));
 
         var actualProduct = response[0];
-        Assert.Multiple(() =>
-        {
-            Assert.That(actualProduct.Id, Is.EqualTo(expectedProduct.Id));
-            Assert.That(actualProduct.Name, Is.EqualTo(expectedProduct.Name));
-            Assert.That(actualProduct.Price, Is.EqualTo(expectedProduct.Price));
-        });
+        Assert.That(actualProduct, Is.EqualTo(expectedProduct));
     }
 
     [Test]
