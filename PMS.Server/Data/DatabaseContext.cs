@@ -3,14 +3,8 @@ using PMS.Server.Models;
 
 namespace PMS.Server.Data;
 
-internal class DatabaseContext : DbContext
+internal class DatabaseContext(ILogger<DatabaseContext> _logger, IConfiguration _configuration) : DbContext
 {
-    public DatabaseContext(ILogger<DatabaseContext> logger, IConfiguration configuration)
-    {
-        _logger = logger;
-        _configuration = configuration;
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // FIXME: OnConfiguring isn't eargly called, so will be called during a gRPC call.
@@ -35,6 +29,4 @@ internal class DatabaseContext : DbContext
     }
 
     public virtual DbSet<ProductModel> Products { get; set; }
-    private readonly ILogger<DatabaseContext> _logger;
-    private readonly IConfiguration _configuration;
 }

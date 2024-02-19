@@ -5,14 +5,8 @@ using PMS.Services.Product;
 
 namespace PMS.Server.Services;
 
-internal sealed class ProductLookupService : ProductLookup.ProductLookupBase
+internal sealed class ProductLookupService(IProductRepository _repo, ILogger<ProductLookupService> _logger) : ProductLookup.ProductLookupBase
 {
-    public ProductLookupService(IProductRepository repo, ILogger<ProductLookupService> logger)
-    {
-        _repo = repo;
-        _logger = logger;
-    }
-
     public override Task<ProductInfo> GetProductById(GetProductByIdRequest request, ServerCallContext context)
     {
         _logger.LogInformation("Product with an id of {Id} was requested.", request.Id);
@@ -42,7 +36,5 @@ internal sealed class ProductLookupService : ProductLookup.ProductLookupBase
         }
     }
 
-    private readonly IProductRepository _repo;
-    private readonly ILogger<ProductLookupService> _logger;
     private readonly ProductMapper _mapper = new();
 }

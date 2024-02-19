@@ -5,13 +5,8 @@ using PMS.Services.Product;
 
 namespace PMS.Lib.Services;
 
-internal sealed class ProductService : IProductService
+internal sealed class ProductService(ProductLookup.ProductLookupClient _productLookupClient) : IProductService
 {
-    public ProductService(ProductLookup.ProductLookupClient productLookupClient)
-    {
-        _productLookupClient = productLookupClient;
-    }
-
     // TODO: Return a discriminated union so consumers can use actual errors instead of just returning null
     public async Task<Product?> GetProductByIdAsync(int id)
     {
@@ -46,6 +41,5 @@ internal sealed class ProductService : IProductService
         return _mapper.ProductInfoListToProductList(response);
     }
 
-    private readonly ProductLookup.ProductLookupClient _productLookupClient;
     private readonly ProductMapper _mapper = new();
 }
