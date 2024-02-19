@@ -28,6 +28,24 @@ internal sealed class ProductService : IProductService
         return _mapper.ProductInfoToProduct(response);
     }
 
+    public async Task<IReadOnlyList<Product>> GetProductsByPartialNameAsync(string partialName)
+    {
+        List<ProductInfo> response;
+
+        try
+        {
+            var streamingCall = _productLookupClient.GetProductsByPartialName(new GetProductsByPartialNameRequest { PartialName = partialName });
+            response = await streamingCall.ResponseStream.ReadAllAsync().ToListAsync();
+        }
+        catch (RpcException)
+        {
+            // TODO: See TODO above GetProductByIdAsync
+            return [];
+        }
+
+        return _mapper.ProductInfoListToProductList(response);
+    }
+
     private readonly ProductLookup.ProductLookupClient _productLookupClient;
     private readonly ProductMapper _mapper = new();
 }

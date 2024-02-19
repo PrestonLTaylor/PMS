@@ -57,4 +57,65 @@ internal sealed class ProductServiceTests
         // Assert
         Assert.That(response, Is.Null);
     }
+
+    [Test]
+    public async Task GetProductsByPartialNameAsync_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
+    {
+        // Arrange
+        const string fullProductName = "Bread";
+        var expectedProduct = new ProductInfo
+        {
+            Id = 1,
+            Name = fullProductName,
+            Price = 100,
+        };
+        var productData = new List<ProductInfo>()
+        {
+            expectedProduct
+        };
+
+        var grpcResponse = CallHelpers.CreateStreamingResponse(productData);
+        var productLookupMock = new Mock<ProductLookup.ProductLookupClient>();
+        productLookupMock.Setup(m => m.GetProductsByPartialName(new GetProductsByPartialNameRequest { PartialName = fullProductName }, null, null, default))
+            .Returns(grpcResponse);
+
+        var repo = new ProductService(productLookupMock.Object);
+
+        // Act
+        var response = await repo.GetProductsByPartialNameAsync(fullProductName);
+
+        // Assert
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response, Has.Count.EqualTo(1));
+
+        var actualProduct = response[0];
+        Assert.Multiple(() =>
+        {
+            Assert.That(actualProduct.Id, Is.EqualTo(expectedProduct.Id));
+            Assert.That(actualProduct.Name, Is.EqualTo(expectedProduct.Name));
+            Assert.That(actualProduct.Price, Is.EqualTo(expectedProduct.Price));
+        });
+    }
+
+    [Test]
+    public async Task GetProductsByPartialNameAsync_ReturnsAnEmptyProductList_WhenSuppliedInvalidName()
+    {
+        // Arrange
+        const string invalidProductName = "Invalid";
+        var productData = new List<ProductInfo>() {};
+
+        var grpcResponse = CallHelpers.CreateStreamingResponse(productData);
+        var productLookupMock = new Mock<ProductLookup.ProductLookupClient>();
+        productLookupMock.Setup(m => m.GetProductsByPartialName(new GetProductsByPartialNameRequest { PartialName = invalidProductName }, null, null, default))
+            .Returns(grpcResponse);
+
+        var repo = new ProductService(productLookupMock.Object);
+
+        // Act
+        var response = await repo.GetProductsByPartialNameAsync(invalidProductName);
+
+        // Assert
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response, Has.Count.EqualTo(0));
+    }
 }
