@@ -11,7 +11,7 @@ namespace PMS.Server.UnitTests;
 internal sealed class ProductLookupServiceTests
 {
     [Test]
-    public void GetProduct_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
+    public void GetProductById_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
     {
         // Arrange
         const int expectedId = 1;
@@ -31,16 +31,11 @@ internal sealed class ProductLookupServiceTests
         var response = service.GetProductById(new GetProductByIdRequest { Id = expectedId }, null!).Result;
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(response.Id, Is.EqualTo(expectedProduct.Id));
-            Assert.That(response.Name, Is.EqualTo(expectedProduct.Name));
-            Assert.That(response.Price, Is.EqualTo(expectedProduct.Price));
-        });
+        Assert.That(response, Is.EqualTo(expectedProduct));
     }
 
     [Test]
-    public void GetProduct_ThrowsRpcNotFoundException_WhenSuppliedInvalidId()
+    public void GetProductById_ThrowsRpcNotFoundException_WhenSuppliedInvalidId()
     {
         // Arrange
         const int expectedId = 1;

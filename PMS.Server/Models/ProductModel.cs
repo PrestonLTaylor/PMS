@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PMS.Services.Product;
+using System.ComponentModel.DataAnnotations;
 
 namespace PMS.Server.Models;
 
-internal sealed class ProductModel
+internal sealed class ProductModel : IEquatable<ProductModel>, IEquatable<ProductInfo>
 {
     [Key]
     public int Id { get; set; }
@@ -12,11 +13,18 @@ internal sealed class ProductModel
 
     public override bool Equals(object? obj)
     {
-        if (obj is not ProductModel) return false;
+        return Equals(obj as ProductModel);
+    }
 
-        var rhs = (obj as ProductModel)!;
+    public bool Equals(ProductModel? rhs)
+    {
+        return rhs is not null && Id == rhs.Id && Name == rhs.Name && Price == rhs.Price;
+    }
 
-        return Id == rhs.Id && Name == rhs.Name && Price == rhs.Price;
+    // NOTE: Used for tests
+    public bool Equals(ProductInfo? rhs)
+    {
+        return rhs is not null && Id == rhs.Id && Name == rhs.Name && Price == rhs.Price;
     }
 
     public override int GetHashCode()
