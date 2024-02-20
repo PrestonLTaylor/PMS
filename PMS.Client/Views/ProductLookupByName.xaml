@@ -13,31 +13,32 @@
         <converters:PriceToStringConverter x:Key="priceToString" />
     </ContentPage.Resources>
 
-    <Grid Padding="15" RowDefinitions="Auto, Auto, *, Auto">
+    <Grid Padding="15" RowDefinitions="Auto, *, Auto">
         <Frame>
             <Entry Placeholder="Enter Product Name" Text="{Binding PartialProductName}" />
         </Frame>
 
-        <CollectionView
-            Grid.Row="1"
+        <ScrollView Grid.Row="1">
+            <CollectionView
             ItemsSource="{Binding Products}"
             SelectionMode="None">
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:Product">
-                    <Grid ColumnDefinitions="*, *">
-                        <Frame>
-                            <Label Text="{Binding Name, StringFormat='Name = {0}'}" VerticalOptions="Center" />
-                        </Frame>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Product">
+                        <Grid ColumnDefinitions="*, *">
+                            <Frame>
+                                <Label Text="{Binding Name, StringFormat='Name = {0}'}" VerticalOptions="Center" />
+                            </Frame>
 
-                        <Frame Grid.Column="1">
-                            <Label Text="{Binding Price, StringFormat='Price = {0}', Converter={StaticResource priceToString}}" VerticalOptions="Center" />
-                        </Frame>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+                            <Frame Grid.Column="1">
+                                <Label Text="{Binding Price, StringFormat='Price = {0}', Converter={StaticResource priceToString}}" VerticalOptions="Center" />
+                            </Frame>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
 
-        </CollectionView>
+            </CollectionView>
+        </ScrollView>
 
         <Button
             Grid.Row="3"
