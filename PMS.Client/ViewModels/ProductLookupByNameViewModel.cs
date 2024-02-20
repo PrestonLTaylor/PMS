@@ -23,6 +23,10 @@ public sealed class ProductLookupByNameViewModel : BaseViewModel
         IsBusy = true;
 
         var foundProducts = await _productService.GetProductsByPartialNameAsync(PartialProductName);
+        if (foundProducts.Count == 0)
+        {
+            await Shell.Current.DisplayAlert("Not Found", $"No products were found with the name \"{PartialProductName}\"", "OK");
+        }
 
         Products.Clear();
         foreach (var foundProduct in foundProducts)
