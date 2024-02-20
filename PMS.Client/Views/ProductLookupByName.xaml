@@ -15,13 +15,15 @@
 
     <Grid Padding="15" RowDefinitions="Auto, *, Auto">
         <Frame>
-            <Entry Placeholder="Enter Product Name" Text="{Binding PartialProductName}" />
+            <Entry
+                IsEnabled="{Binding IsNotBusy}"
+                Placeholder="Enter Product Name"
+                ReturnCommand="{Binding GetProductsByNameCommand}"
+                Text="{Binding PartialProductName}" />
         </Frame>
 
         <ScrollView Grid.Row="1">
-            <CollectionView
-            ItemsSource="{Binding Products}"
-            SelectionMode="None">
+            <CollectionView ItemsSource="{Binding Products}" SelectionMode="None">
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Product">

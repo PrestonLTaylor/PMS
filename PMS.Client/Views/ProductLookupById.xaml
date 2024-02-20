@@ -21,6 +21,7 @@
             <Entry
                 Keyboard="Numeric"
                 Placeholder="Enter Id"
+                ReturnCommand="{Binding GetProductByIdCommand}"
                 Text="{Binding IdToLookup}" />
         </Frame>
 
