@@ -1,4 +1,6 @@
 ﻿using Grpc.Core;
+using OneOf;
+using OneOf.Types;
 using PMS.Lib.Data;
 using PMS.Lib.Data.Mappers;
 using PMS.Services.Product;
@@ -7,23 +9,26 @@ namespace PMS.Lib.Services;
 
 internal sealed class ProductService(ProductLookup.ProductLookupClient _productLookupClient) : IProductService
 {
-    // TODO: Return a discriminated union so consumers can use actual errors instead of just returning null
-    public async Task<Product?> GetProductByIdAsync(int id)
+    public async Task<OneOf<Product, NotFound, GrpcError>> GetProductByIdAsync(int id)
     {
         ProductInfo response;
         try
         {
             response = await _productLookupClient.GetProductByIdAsync(new GetProductByIdRequest { Id = id });
         }
-        catch (RpcException)
+        catch (RpcException ex)
         {
-            return null;
+            return ex.StatusCode switch
+            {
+                StatusCode.NotFound => new NotFound(),
+                _ => new GrpcError(ex)
+            };
         }
 
         return _mapper.ProductInfoToProduct(response);
     }
 
-    public async Task<IReadOnlyList<Product>> GetProductsByPartialNameAsync(string partialName)
+    public async Task<OneOf<IReadOnlyList<Product>, NotFound, GrpcError>> GetProductsByPartialNameAsync(string partialName)
     {
         List<ProductInfo> response;
 
@@ -32,11 +37,13 @@ internal sealed class ProductService(ProductLookup.ProductLookupClient _productL
             var streamingCall = _productLookupClient.GetProductsByPartialName(new GetProductsByPartialNameRequest { PartialName = partialName });
             response = await streamingCall.ResponseStream.ReadAllAsync().ToListAsync();
         }
-        catch (RpcException)
+        catch (RpcException ex)
         {
-            // TODO: See TODO above GetProductByIdAsync
-            return [];
+            // NOTE: We don't return a NotFound RpcException if no products are found
+            return new GrpcError(ex);
         }
+
+        if (response.Count == 0) return new NotFound();
 
         return _mapper.ProductInfoListToProductList(response);
     }

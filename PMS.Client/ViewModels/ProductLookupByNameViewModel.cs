@@ -1,4 +1,5 @@
-﻿using PMS.Lib.Data;
+﻿using PMS.Lib;
+using PMS.Lib.Data;
 using PMS.Lib.Services;
 using System.Collections.ObjectModel;
 
@@ -22,19 +23,34 @@ public sealed class ProductLookupByNameViewModel : BaseViewModel
 
         IsBusy = true;
 
-        var foundProducts = await _productService.GetProductsByPartialNameAsync(PartialProductName);
-        if (foundProducts.Count == 0)
-        {
-            await Shell.Current.DisplayAlert("Not Found", $"No products were found with the name \"{PartialProductName}\"", "OK");
-        }
-
         Products.Clear();
-        foreach (var foundProduct in foundProducts)
-        {
-            Products.Add(foundProduct);
-        }
+
+        var response = await _productService.GetProductsByPartialNameAsync(PartialProductName);
+        response.Switch(
+           HandleFoundProducts,
+           async _ => await HandleNotFound(),
+           async error => await HandleGrpcError(error)
+        );
 
         IsBusy = false;
+    }
+
+    private void HandleFoundProducts(IReadOnlyList<Product> products)
+    {
+        foreach (var product in products)
+        {
+            Products.Add(product);
+        }
+    }
+
+    private async Task HandleNotFound()
+    {
+        await Shell.Current.DisplayAlert("Not Found", $"No products were found with the name \"{PartialProductName}\"", "OK");
+    }
+
+    private async Task HandleGrpcError(GrpcError error)
+    {
+        await Shell.Current.DisplayAlert(error.StatusCode.ToString(), $"Error Message: {error.Message}", "OK");
     }
 
     public string PartialProductName { get; set; } = null;

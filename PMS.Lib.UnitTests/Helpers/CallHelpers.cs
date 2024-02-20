@@ -39,13 +39,8 @@ internal static class CallHelpers
 }
 
 // NOTE: Used for mocking grpc calls that return a stream of data
-internal class MockedAsyncStreamReader<T> : IAsyncStreamReader<T>
+internal class MockedAsyncStreamReader<T>(List<T> _values) : IAsyncStreamReader<T>
 {
-    public MockedAsyncStreamReader(List<T> values)
-    {
-        _values = values;
-    }
-
     public T Current => _values[_index];
 
     public Task<bool> MoveNext(CancellationToken cancellationToken)
@@ -54,7 +49,6 @@ internal class MockedAsyncStreamReader<T> : IAsyncStreamReader<T>
         return Task.FromResult(_index < _values.Count);
     }
 
-    private readonly List<T> _values;
     private int _index = -1;
 }
 

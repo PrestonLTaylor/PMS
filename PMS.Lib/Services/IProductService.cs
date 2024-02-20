@@ -1,9 +1,11 @@
-﻿using PMS.Lib.Data;
+﻿using OneOf;
+using OneOf.Types;
+using PMS.Lib.Data;
 
 namespace PMS.Lib.Services;
 
 public interface IProductService
 {
-    public Task<Product?> GetProductByIdAsync(int id);
-    public Task<IReadOnlyList<Product>> GetProductsByPartialNameAsync(string partialName);
+    public Task<OneOf<Product, NotFound, GrpcError>> GetProductByIdAsync(int id);
+    public Task<OneOf<IReadOnlyList<Product>, NotFound, GrpcError>> GetProductsByPartialNameAsync(string partialName);
 }
