@@ -9,13 +9,8 @@ public static class DatabaseSeeding
 		using var scope = provider.CreateScope();
 
 		var databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+		await databaseContext.Database.EnsureDeletedAsync();
 		await databaseContext.Database.EnsureCreatedAsync();
-
-		if (databaseContext.Products.Any())
-		{
-			return;
-		}
-
 		await SeedProductsIntoDatabase(databaseContext);
 		await databaseContext.SaveChangesAsync();
 	}
@@ -23,7 +18,7 @@ public static class DatabaseSeeding
 	static private async Task SeedProductsIntoDatabase(DatabaseContext databaseContext)
 	{
 		var productFaker = new ProductFaker();
-		var fakedProducts = productFaker.GenerateForever().Take(NUMBER_OF_FAKES_TO_CREATE);
+		var fakedProducts = productFaker.GenerateLazy(NUMBER_OF_FAKES_TO_CREATE);
 		await databaseContext.Products.AddRangeAsync(fakedProducts);
 	}
 

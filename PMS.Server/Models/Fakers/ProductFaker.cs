@@ -8,7 +8,7 @@ internal sealed class ProductFaker : Faker<ProductModel>
 	{
 		StrictMode(true);
 
-		RuleFor(p => p.Id, f => currentProductId++);
+		RuleFor(p => p.Id, f => ++f.IndexVariable);
 
 		RuleFor(p => p.Name, f => f.Commerce.Product());
 
@@ -16,5 +16,4 @@ internal sealed class ProductFaker : Faker<ProductModel>
 	}
 
 	private const int MAX_PRODUCT_PRICE_IN_POUNDS = 100;
-	private int currentProductId = 0;
 }
