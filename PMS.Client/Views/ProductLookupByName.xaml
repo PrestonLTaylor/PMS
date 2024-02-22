@@ -24,6 +24,9 @@
 
         <ScrollView Grid.Row="1">
             <CollectionView ItemsSource="{Binding Products}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Label Text="No products currently found..." />
+                </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Product">
