@@ -1,0 +1,25 @@
+name: .NET integration tests
+
+on:
+  push:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  integration-tests:
+
+    # We need a seperate job for running integration tests as we need ubuntu-latest for the postgres container
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore PMS.Server.IntegrationTests/PMS.Server.IntegrationTests.csproj
+    - name: Build
+      run: dotnet build --no-restore PMS.Server.IntegrationTests/PMS.Server.IntegrationTests.csproj
+    - name: Test
+      run: dotnet test --no-build --verbosity normal PMS.Server.IntegrationTests/PMS.Server.IntegrationTests.csproj

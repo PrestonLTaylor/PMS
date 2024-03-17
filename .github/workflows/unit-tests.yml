@@ -1,0 +1,32 @@
+name: .NET unit tests
+
+on:
+  push:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  unit-tests:
+
+    # Run our unit tests seperately, see other CI job comments
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    - name: Install .NET Maui
+      run: dotnet workload install maui
+    - name: Restore dependencies
+      run: dotnet restore PMS.Server.UnitTests/PMS.Server.UnitTests.csproj && dotnet restore PMS.Lib.UnitTests/PMS.Lib.UnitTests.csproj
+    - name: Build
+      run: dotnet build --no-restore PMS.Server.UnitTests/PMS.Server.UnitTests.csproj && dotnet build --no-restore PMS.Lib.UnitTests/PMS.Lib.UnitTests.csproj
+    - name: Test
+      run: dotnet test --no-build --verbosity normal PMS.Server.UnitTests/PMS.Server.UnitTests.csproj && dotnet test --no-build --verbosity normal PMS.Lib.UnitTests/PMS.Lib.UnitTests.csproj
