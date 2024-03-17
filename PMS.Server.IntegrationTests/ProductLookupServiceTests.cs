@@ -1,22 +1,27 @@
 using Grpc.Core;
 using Grpc.Net.Client;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Moq;
-using PMS.Server.Data.Repositories;
 using PMS.Server.IntegrationTests.Helpers;
 using PMS.Server.Models;
 using PMS.Services.Product;
 
 namespace PMS.Server.IntegrationTests;
 
-internal sealed class ProductLookupServiceTests : IntegrationTestBase
+internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
 {
+    [SetUp]
+    public async Task SetupTestContainers()
+    {
+        await psqlContainer.StartAsync();
+    }
+
+    [TearDown]
+    public async Task DisposeTestContainers()
+    {
+        await psqlContainer.DisposeAsync();
+    }
+
     [Test]
-    public void GetProductById_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
+    public async Task GetProductById_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
     {
         // Arrange
         const int expectedId = 1;
@@ -27,19 +32,15 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
             Price = 100,
         };
 
-        var mockProductRepo = new Mock<IProductRepository>();
-        mockProductRepo.Setup(m => m.GetProductById(expectedId)).Returns(expectedProduct);
-
-        var channel = CreateGrpcChannel(services =>
-        {
-            services.AddSingleton(mockProductRepo.Object);
-        });
+        var channel = CreateGrpcChannel();
 
         var request = new GetProductByIdRequest { Id = expectedId };
         var client = new ProductLookup.ProductLookupClient(channel);
 
+        await InsertProductIntoPsqlContainer(expectedProduct);
+
         // Act
-        var response = client.GetProductById(request);
+        var response = await client.GetProductByIdAsync(request);
 
         // Assert
         Assert.That(response, Is.EqualTo(expectedProduct));
@@ -50,22 +51,16 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
     {
         // Arrange
         const int invalidId = 1;
-        var mockProductRepo = new Mock<IProductRepository>();
-        mockProductRepo.Setup(m => m.GetProductById(It.IsAny<int>())).Returns((ProductModel?)null);
 
-        var channel = CreateGrpcChannel(services =>
-        {
-            services.AddSingleton(mockProductRepo.Object);
-        });
+        var channel = CreateGrpcChannel();
 
         var request = new GetProductByIdRequest { Id = invalidId };
         var client = new ProductLookup.ProductLookupClient(channel);
 
         // Act
-
-        // Assert
         var exception = Assert.Throws<RpcException>(() => client.GetProductById(request));
 
+        // Assert
         Assert.That(exception.StatusCode, Is.EqualTo(StatusCode.NotFound));
     }
 
@@ -80,18 +75,10 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
             Name = "Brown " + partialProductName,
             Price = 100
         };
-        var productData = new List<ProductModel>()
-        {
-            expectedProduct,
-        };
 
-        var mockProductRepo = new Mock<IProductRepository>();
-        mockProductRepo.Setup(m => m.GetProductsByPartialName(partialProductName)).Returns(productData);
+        var channel = CreateGrpcChannel();
 
-        var channel = CreateGrpcChannel(services =>
-        {
-            services.AddSingleton(mockProductRepo.Object);
-        });
+        await InsertProductIntoPsqlContainer(expectedProduct);
 
         var request = new GetProductsByPartialNameRequest { PartialName = partialProductName };
         var client = new ProductLookup.ProductLookupClient(channel);
@@ -114,15 +101,8 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
     {
         // Arrange
         const string invalidName = "Name";
-        var productData = new List<ProductModel>();
 
-        var mockProductRepo = new Mock<IProductRepository>();
-        mockProductRepo.Setup(m => m.GetProductsByPartialName(invalidName)).Returns(productData);
-
-        var channel = CreateGrpcChannel(services =>
-        {
-            services.AddSingleton(mockProductRepo.Object);
-        });
+        var channel = CreateGrpcChannel();
 
         var request = new GetProductsByPartialNameRequest { PartialName = invalidName };
         var client = new ProductLookup.ProductLookupClient(channel);
@@ -136,26 +116,18 @@ internal sealed class ProductLookupServiceTests : IntegrationTestBase
         Assert.That(actualProducts, Has.Count.EqualTo(0));
     }
 
-    private GrpcChannel CreateGrpcChannel(Action<IServiceCollection> configureTestServices)
+    private GrpcChannel CreateGrpcChannel()
     {
-        // FIXME/NOTE: We need this testing config to set our environment to testing so we don't run our database seeding code
-        var testingConfig = new ConfigurationBuilder()
-            .AddCommandLine(["--environment", "Testing" ])
-            .Build();
-
-        var testClient = Factory.WithWebHostBuilder(builder =>
+        var client = CreateClient();
+        return GrpcChannel.ForAddress(client.BaseAddress!, new GrpcChannelOptions
         {
-            builder.UseConfiguration(testingConfig);
-            builder.ConfigureTestServices(configureTestServices);
-            builder.ConfigureLogging(config =>
-            {
-                config.ClearProviders();
-            });
-        }).CreateClient();
-
-        return GrpcChannel.ForAddress(testClient.BaseAddress!, new GrpcChannelOptions
-        {
-            HttpClient = testClient
+            HttpClient = client
         });
+    }
+
+    // NOTE: This function needs to be called after CreateClient
+    private async Task InsertProductIntoPsqlContainer(ProductModel product)
+    {
+        await psqlContainer.ExecScriptAsync($"INSERT INTO \"Products\" VALUES ({product.Id}, '{product.Name}', {product.Price})");
     }
 }
