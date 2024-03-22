@@ -8,7 +8,7 @@ internal class GrpcIntergrationBase
 {
     public HttpClient CreateClient()
     {
-        var factory = new GrpcWebApplicationFactory<Program>(psqlContainer.GetConnectionString());
+        var factory = new GrpcWebApplicationFactory<Program>(psqlContainer.GetConnectionString(), TEST_JWT_SECRET);
 
         return factory.CreateClient();
     }
@@ -18,4 +18,6 @@ internal class GrpcIntergrationBase
         .WithUsername("testusername")
         .WithPassword("testpassword")
         .Build();
+
+    protected const string TEST_JWT_SECRET = "testjwtsecret";
 }
