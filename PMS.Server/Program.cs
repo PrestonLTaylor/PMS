@@ -15,6 +15,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddGrpc();
 builder.Services.AddRepositories();
 
+builder.Services.AddTransient<IJwtGeneratorService, JwtGeneratorService>();
+
 builder.Host.UseSerilog((hostingContext, config) =>
 {
     config.ReadFrom.Configuration(builder.Configuration);
