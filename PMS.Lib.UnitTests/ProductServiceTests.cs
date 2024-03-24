@@ -158,5 +158,4 @@ internal sealed class ProductServiceTests
         Assert.That(actualResponse, Is.Not.Null);
         Assert.That(actualResponse.StatusCode, Is.EqualTo(expectedStatusCode));
     }
-
 }
