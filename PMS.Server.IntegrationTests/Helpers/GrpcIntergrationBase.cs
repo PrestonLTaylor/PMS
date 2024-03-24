@@ -1,4 +1,6 @@
-﻿using Testcontainers.PostgreSql;
+﻿using Grpc.Net.Client;
+using System.Text;
+using Testcontainers.PostgreSql;
 
 namespace PMS.Server.IntegrationTests.Helpers;
 
@@ -6,12 +8,37 @@ namespace PMS.Server.IntegrationTests.Helpers;
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 internal class GrpcIntergrationBase 
 {
-    public HttpClient CreateClient()
+    [SetUp]
+    public async Task SetupTestContainers()
     {
-        var factory = new GrpcWebApplicationFactory<Program>(psqlContainer.GetConnectionString(), TEST_JWT_SECRET);
+        await psqlContainer.StartAsync();
+    }
+
+    [TearDown]
+    public async Task DisposeTestContainers()
+    {
+        await psqlContainer.DisposeAsync();
+    }
+
+    protected GrpcChannel CreateGrpcChannel()
+    {
+        var client = CreateClient();
+        return GrpcChannel.ForAddress(client.BaseAddress!, new GrpcChannelOptions
+        {
+            HttpClient = client
+        });
+    }
+
+    private HttpClient CreateClient()
+    {
+        var factory = new GrpcWebApplicationFactory<Program>(psqlContainer.GetConnectionString(), jwtSecret);
+
+        services = factory.Services;
 
         return factory.CreateClient();
     }
+
+    protected IServiceProvider? services;
 
     protected readonly PostgreSqlContainer psqlContainer = new PostgreSqlBuilder()
         .WithDatabase("testdb")
@@ -19,5 +46,6 @@ internal class GrpcIntergrationBase
         .WithPassword("testpassword")
         .Build();
 
-    protected const string TEST_JWT_SECRET = "testjwtsecret";
+    // NOTE: We need a key that is a size of at least 128-bits when generating the HMACSH256 hash
+    protected readonly string jwtSecret = "LONG_TEST_SECRET_LONG_TEST_SECRET_LONG_TEST_SECRET_LONG_TEST_SECRET";
 }

@@ -34,6 +34,7 @@ app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGrpcService<LoginService>();
 app.MapGrpcService<ProductLookupService>();
 
 app.Run();

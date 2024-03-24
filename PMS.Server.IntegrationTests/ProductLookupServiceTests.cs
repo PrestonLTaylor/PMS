@@ -1,5 +1,4 @@
 using Grpc.Core;
-using Grpc.Net.Client;
 using PMS.Server.IntegrationTests.Helpers;
 using PMS.Server.Models;
 using PMS.Services.Product;
@@ -8,18 +7,6 @@ namespace PMS.Server.IntegrationTests;
 
 internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
 {
-    [SetUp]
-    public async Task SetupTestContainers()
-    {
-        await psqlContainer.StartAsync();
-    }
-
-    [TearDown]
-    public async Task DisposeTestContainers()
-    {
-        await psqlContainer.DisposeAsync();
-    }
-
     [Test]
     public async Task GetProductById_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
     {
@@ -114,15 +101,6 @@ internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
         // Assert
         Assert.That(response.GetStatus(), Is.EqualTo(Status.DefaultSuccess));
         Assert.That(actualProducts, Has.Count.EqualTo(0));
-    }
-
-    private GrpcChannel CreateGrpcChannel()
-    {
-        var client = CreateClient();
-        return GrpcChannel.ForAddress(client.BaseAddress!, new GrpcChannelOptions
-        {
-            HttpClient = client
-        });
     }
 
     // NOTE: This function needs to be called after CreateClient

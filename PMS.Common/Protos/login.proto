@@ -1,0 +1,15 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "PMS.Services.Authentication";
+
+import "Protos/loginCredentials.proto";
+
+package Authentication;
+
+service Login {
+    rpc Login(LoginCredentials) returns (JWTResponse);
+}
+
+message JWTResponse {
+    string token = 1;
+}
