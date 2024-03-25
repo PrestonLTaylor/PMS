@@ -24,13 +24,15 @@ public static class MauiProgram
         SetupConfigurationsAsync(builder.Configuration).Wait();
         SetupPMSServices(builder);
 
+        builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<MainMenuViewModel>();
         builder.Services.AddTransient<ProductLookupByIdViewModel>();
         builder.Services.AddTransient<ProductLookupByNameViewModel>();
 
+        builder.Services.AddTransient<Login>();
+        builder.Services.AddTransient<MainMenu>();
         builder.Services.AddTransient<ProductLookupById>();
         builder.Services.AddTransient<ProductLookupByName>();
-        builder.Services.AddTransient<MainMenu>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

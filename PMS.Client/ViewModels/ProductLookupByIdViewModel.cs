@@ -1,5 +1,4 @@
-﻿using PMS.Lib;
-using PMS.Lib.Data;
+﻿using PMS.Lib.Data;
 using PMS.Lib.Services;
 
 namespace PMS.Client.ViewModels;
@@ -41,11 +40,6 @@ public sealed class ProductLookupByIdViewModel : BaseViewModel
     private async Task HandleNotFound()
     {
         await Shell.Current.DisplayAlert("Not Found", $"Unable to find product with an id of {IdToLookup}", "OK");
-    }
-
-    private async Task HandleGrpcError(GrpcError error)
-    {
-        await Shell.Current.DisplayAlert(error.StatusCode.ToString(), $"Error Message: {error.Message}", "OK");
     }
 
     public int? IdToLookup { get; set; } = null;
