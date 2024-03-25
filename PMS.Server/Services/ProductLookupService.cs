@@ -1,10 +1,13 @@
 ﻿using Grpc.Core;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using PMS.Server.Data.Mappers;
 using PMS.Server.Data.Repositories;
 using PMS.Services.Product;
 
 namespace PMS.Server.Services;
 
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 internal sealed class ProductLookupService(IProductRepository _repo, ILogger<ProductLookupService> _logger) : ProductLookup.ProductLookupBase
 {
     public override Task<ProductInfo> GetProductById(GetProductByIdRequest request, ServerCallContext context)

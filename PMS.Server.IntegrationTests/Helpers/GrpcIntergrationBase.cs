@@ -1,4 +1,6 @@
 ﻿using Grpc.Net.Client;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text;
 using Testcontainers.PostgreSql;
 
@@ -22,16 +24,25 @@ internal class GrpcIntergrationBase
 
     protected GrpcChannel CreateGrpcChannel()
     {
-        var client = CreateClient();
+        return CreateGrpcChannel(_ => { });
+    }
+
+    protected GrpcChannel CreateGrpcChannel(Action<IServiceCollection> configureTestServices)
+    {
+        var client = CreateClient(configureTestServices);
         return GrpcChannel.ForAddress(client.BaseAddress!, new GrpcChannelOptions
         {
             HttpClient = client
         });
     }
 
-    private HttpClient CreateClient()
+    private HttpClient CreateClient(Action<IServiceCollection> configureTestServices)
     {
-        var factory = new GrpcWebApplicationFactory<Program>(psqlContainer.GetConnectionString(), jwtSecret);
+        var factory = new GrpcWebApplicationFactory<Program>(psqlContainer.GetConnectionString(), jwtSecret)
+            .WithWebHostBuilder(hostBuilder =>
+            {
+                hostBuilder.ConfigureTestServices(configureTestServices);
+            });
 
         services = factory.Services;
 
