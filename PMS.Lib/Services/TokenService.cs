@@ -3,10 +3,15 @@
 namespace PMS.Lib.Services;
 
 // NOTE: A simple singleton service for storing the JWT token & metadata we recieve when successfully logging in
-internal class TokenService
+public class TokenService
 {
+    public void ResetToken()
+    {
+        _token = "";
+    }
+
     private string _token = "";
-    virtual public string Token
+    virtual internal string Token
     {
         get => _token;
         set
