@@ -9,6 +9,8 @@ public class TokenService
     {
         _token = "";
     }
+    public bool HasToken() { return _token != ""; }
+    public bool HasTokenExpired() { return Expiration < DateTime.UtcNow; }
 
     private string _token = "";
     virtual internal string Token
@@ -21,5 +23,5 @@ public class TokenService
         }
     }
 
-    public DateTime Expiration { get; private set; } = DateTime.MinValue;
+    internal DateTime Expiration { get; private set; } = DateTime.MinValue;
 }
