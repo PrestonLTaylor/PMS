@@ -26,7 +26,9 @@ public static class JwtAuthenticationInstaller
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true
+                    ValidateIssuerSigningKey = true,
+                    // Default clock skew is 5 minutes, so it extends our token's lifetimes, which we don't want
+                    ClockSkew = TimeSpan.Zero,
                 };
             });
     }
