@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using PMS.Lib;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace PMS.Client.ViewModels;
@@ -26,5 +27,10 @@ public class BaseViewModel : INotifyPropertyChanged
     protected void OnPropertyChanged([CallerMemberName]string propertyName = "")
     {
         PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected async Task HandleGrpcError(GrpcError error)
+    {
+        await Shell.Current.DisplayAlert(error.StatusCode.ToString(), $"Error Message: {error.Message}", "OK");
     }
 }

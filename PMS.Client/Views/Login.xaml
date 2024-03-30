@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PMS.Client.Views.Login"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:PMS.Client.ViewModels"
+    Title="Login"
+    x:DataType="viewmodel:LoginViewModel">
+    <Grid
+        Padding="20"
+        RowDefinitions="Auto, Auto, *, Auto"
+        RowSpacing="10">
+        <Frame>
+            <Entry
+                IsEnabled="{Binding IsNotBusy}"
+                Placeholder="Username"
+                ReturnCommand="{Binding LoginCommand}"
+                Text="{Binding Username}" />
+        </Frame>
+
+        <Frame Grid.Row="1">
+            <Entry
+                IsEnabled="{Binding IsNotBusy}"
+                IsPassword="True"
+                Placeholder="Password"
+                ReturnCommand="{Binding LoginCommand}"
+                Text="{Binding Password}" />
+        </Frame>
+
+        <Button
+            Grid.Row="3"
+            Command="{Binding LoginCommand}"
+            IsEnabled="{Binding IsNotBusy}"
+            Text="Login" />
+
+        <ActivityIndicator
+            Grid.RowSpan="4"
+            HorizontalOptions="FillAndExpand"
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}"
+            VerticalOptions="CenterAndExpand" />
+    </Grid>
+</ContentPage>

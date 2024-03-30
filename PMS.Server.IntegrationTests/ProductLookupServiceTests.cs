@@ -1,5 +1,6 @@
 using Grpc.Core;
-using Grpc.Net.Client;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.DependencyInjection;
 using PMS.Server.IntegrationTests.Helpers;
 using PMS.Server.Models;
 using PMS.Services.Product;
@@ -8,18 +9,6 @@ namespace PMS.Server.IntegrationTests;
 
 internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
 {
-    [SetUp]
-    public async Task SetupTestContainers()
-    {
-        await psqlContainer.StartAsync();
-    }
-
-    [TearDown]
-    public async Task DisposeTestContainers()
-    {
-        await psqlContainer.DisposeAsync();
-    }
-
     [Test]
     public async Task GetProductById_ReturnsExpectedProduct_WhenSuppliedExpectedIdOfProduct()
     {
@@ -32,7 +21,7 @@ internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
             Price = 100,
         };
 
-        var channel = CreateGrpcChannel();
+        var channel = CreateGrpcChannel(MakeAllRequestsAuthenticated);
 
         var request = new GetProductByIdRequest { Id = expectedId };
         var client = new ProductLookup.ProductLookupClient(channel);
@@ -52,7 +41,7 @@ internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
         // Arrange
         const int invalidId = 1;
 
-        var channel = CreateGrpcChannel();
+        var channel = CreateGrpcChannel(MakeAllRequestsAuthenticated);
 
         var request = new GetProductByIdRequest { Id = invalidId };
         var client = new ProductLookup.ProductLookupClient(channel);
@@ -62,6 +51,22 @@ internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
 
         // Assert
         Assert.That(exception.StatusCode, Is.EqualTo(StatusCode.NotFound));
+    }
+
+    [Test]
+    public void GetProductById_ThrowsUnauthenticated_WhenCallingWhileUnauthenticated()
+    {
+        // Arrange
+        var channel = CreateGrpcChannel();
+
+        var request = new GetProductByIdRequest { Id = 0 };
+        var client = new ProductLookup.ProductLookupClient(channel);
+
+        // Act
+        var exception = Assert.Throws<RpcException>(() => client.GetProductById(request));
+
+        // Assert
+        Assert.That(exception.StatusCode, Is.EqualTo(StatusCode.Unauthenticated));
     }
 
     [Test]
@@ -76,7 +81,7 @@ internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
             Price = 100
         };
 
-        var channel = CreateGrpcChannel();
+        var channel = CreateGrpcChannel(MakeAllRequestsAuthenticated);
 
         await InsertProductIntoPsqlContainer(expectedProduct);
 
@@ -102,7 +107,7 @@ internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
         // Arrange
         const string invalidName = "Name";
 
-        var channel = CreateGrpcChannel();
+        var channel = CreateGrpcChannel(MakeAllRequestsAuthenticated);
 
         var request = new GetProductsByPartialNameRequest { PartialName = invalidName };
         var client = new ProductLookup.ProductLookupClient(channel);
@@ -116,18 +121,35 @@ internal sealed class ProductLookupServiceTests : GrpcIntergrationBase
         Assert.That(actualProducts, Has.Count.EqualTo(0));
     }
 
-    private GrpcChannel CreateGrpcChannel()
+    [Test]
+    public void GetProductsByPartialName_ThrowsUnauthenticated_WhenCallingWhileUnauthenticated()
     {
-        var client = CreateClient();
-        return GrpcChannel.ForAddress(client.BaseAddress!, new GrpcChannelOptions
+        // Arrange
+        var channel = CreateGrpcChannel();
+
+        var request = new GetProductsByPartialNameRequest { PartialName = "" };
+        var client = new ProductLookup.ProductLookupClient(channel);
+
+        // Act
+        var exception = Assert.ThrowsAsync<RpcException>(async () =>
         {
-            HttpClient = client
+            var response = client.GetProductsByPartialName(request);
+            await response.ResponseStream.ReadAllAsync().ToListAsync();
         });
+
+        // Assert
+        Assert.That(exception.StatusCode, Is.EqualTo(StatusCode.Unauthenticated));
     }
 
     // NOTE: This function needs to be called after CreateClient
     private async Task InsertProductIntoPsqlContainer(ProductModel product)
     {
         await psqlContainer.ExecScriptAsync($"INSERT INTO \"Products\" VALUES ({product.Id}, '{product.Name}', {product.Price})");
+    }
+
+    private void MakeAllRequestsAuthenticated(IServiceCollection services)
+    {
+        // We replace the authenticate scheme provider to use our testing authentication provider to authenticate all requests
+        services.AddTransient<IAuthenticationSchemeProvider, TestingAuthSchemeProvider>();
     }
 }

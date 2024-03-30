@@ -26,5 +26,21 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+    <!--Shiny Config-->
+    <key>UIBackgroundModes</key>
+    <array>
+
+        <string>processing</string>
+        <string>fetch</string>
+
+    </array>
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.shiny.job</string>
+        <string>com.shiny.jobpower</string>
+        <string>com.shiny.jobnet</string>
+        <string>com.shiny.jobpowernet</string>
+    </array>
+    <!--Shiny Config-->
 </dict>
 </plist>

@@ -7,7 +7,7 @@ using PMS.Server.Data;
 
 namespace PMS.Server.IntegrationTests.Helpers;
 
-internal class GrpcWebApplicationFactory<TProgram>(string _connectionString)
+internal class GrpcWebApplicationFactory<TProgram>(string _connectionString, string _jwtSecret)
     : WebApplicationFactory<TProgram> where TProgram : class
 {
     protected override IHost CreateHost(IHostBuilder builder)
@@ -27,5 +27,6 @@ internal class GrpcWebApplicationFactory<TProgram>(string _connectionString)
         builder.UseEnvironment("Testing");
 
         Environment.SetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection", _connectionString);
+        Environment.SetEnvironmentVariable("jwt-secret", _jwtSecret);
     }
 }

@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PMS.Server.Models;
 
 namespace PMS.Server.Data;
 
-internal class DatabaseContext(ILogger<DatabaseContext> _logger, IConfiguration _configuration) : DbContext
+internal class DatabaseContext(ILogger<DatabaseContext> _logger, IConfiguration _configuration) : IdentityDbContext<UserModel>
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

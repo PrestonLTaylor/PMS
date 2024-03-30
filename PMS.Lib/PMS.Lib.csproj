@@ -22,6 +22,12 @@
       </AssemblyAttribute>
     </ItemGroup>
 
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
 	<ItemGroup>
 	  <Folder Include="Platforms\Android\" />
 	  <Folder Include="Platforms\MacCatalyst\" />
@@ -33,6 +39,7 @@
 	  <PackageReference Include="Grpc.Net.ClientFactory" Version="2.60.0" />
 	  <PackageReference Include="OneOf" Version="3.0.263" />
 	  <PackageReference Include="Riok.Mapperly" Version="3.3.0" />
+	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.1" />
 	  <PackageReference Include="System.Linq.Async" Version="6.0.1" />
 	</ItemGroup>
 

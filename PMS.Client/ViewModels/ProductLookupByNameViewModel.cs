@@ -1,5 +1,4 @@
-﻿using PMS.Lib;
-using PMS.Lib.Data;
+﻿using PMS.Lib.Data;
 using PMS.Lib.Services;
 using System.Collections.ObjectModel;
 
@@ -46,11 +45,6 @@ public sealed class ProductLookupByNameViewModel : BaseViewModel
     private async Task HandleNotFound()
     {
         await Shell.Current.DisplayAlert("Not Found", $"No products were found with the name \"{PartialProductName}\"", "OK");
-    }
-
-    private async Task HandleGrpcError(GrpcError error)
-    {
-        await Shell.Current.DisplayAlert(error.StatusCode.ToString(), $"Error Message: {error.Message}", "OK");
     }
 
     public string PartialProductName { get; set; } = null;
