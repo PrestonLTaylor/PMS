@@ -1,21 +1,24 @@
 ﻿using PMS.Server.Data;
 using PMS.Server.Models;
+using PMS.Server.Options;
 
 namespace PMS.Server.Installers;
 
 public static class IdentityInstaller
 {
-    public static IServiceCollection AddPMSUserIdentity(this IServiceCollection services)
+    public static IServiceCollection AddPMSUserIdentity(this IServiceCollection services, IConfiguration configuration)
     {
+        var passwordValidationOptions = configuration
+            .GetRequiredSection(nameof(PasswordValidationOptions))
+            .Get<PasswordValidationOptions>()!;
+
         services.AddIdentity<UserModel, DefaultRole>(options =>
         {
-            // NOTE: This program is intented for "internal" use, so "secure" passwords aren't needed.
-            // FIXME: Should still have a configuration value for changing this.
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireDigit = false;
-            options.Password.RequiredLength = 4;
+            options.Password.RequireNonAlphanumeric = passwordValidationOptions.RequireNonAlphanumeric;
+            options.Password.RequireLowercase = passwordValidationOptions.RequireLowercase;
+            options.Password.RequireUppercase = passwordValidationOptions.RequireUppercase;
+            options.Password.RequireDigit = passwordValidationOptions.RequireDigit;
+            options.Password.RequiredLength = passwordValidationOptions.RequiredLength;
         }).AddEntityFrameworkStores<DatabaseContext>();
 
         return services;

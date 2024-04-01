@@ -7,7 +7,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DatabaseContext>();
-builder.Services.AddPMSUserIdentity();
+builder.Services.AddPMSUserIdentity(builder.Configuration);
 
 builder.Services.AddJwtBasedAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
