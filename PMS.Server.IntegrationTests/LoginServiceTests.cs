@@ -1,10 +1,11 @@
 ﻿using Grpc.Core;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PMS.Server.IntegrationTests.Helpers;
 using PMS.Server.Models;
+using PMS.Server.Options;
 using PMS.Services.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -31,7 +32,7 @@ internal sealed class LoginServiceTests : GrpcIntergrationBase
         var response = await client.LoginAsync(new LoginCredentials { Username = validUsername, Password = validPassword });
 
         // Assert
-        await AssertThatJwtTokenIsValidAsync(services!.GetRequiredService<IConfiguration>(), response.Token);
+        await AssertThatJwtTokenIsValidAsync(services!.GetRequiredService<IOptions<JwtValidationOptions>>(), response.Token);
     }
 
     [Test]
@@ -74,7 +75,7 @@ internal sealed class LoginServiceTests : GrpcIntergrationBase
         Assert.That(exception.StatusCode, Is.EqualTo(StatusCode.Unauthenticated));
     }
 
-    private async Task AssertThatJwtTokenIsValidAsync(IConfiguration config, string token)
+    private async Task AssertThatJwtTokenIsValidAsync(IOptions<JwtValidationOptions> jwtValidationOptions, string token)
     {
         var keyBytes = Encoding.UTF8.GetBytes(jwtSecret);
 
@@ -83,8 +84,8 @@ internal sealed class LoginServiceTests : GrpcIntergrationBase
         {
             IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
             ValidAlgorithms = [ SecurityAlgorithms.HmacSha256 ],
-            ValidIssuer = config.GetValue<string>("jwt-issuer"),
-            ValidAudience = config.GetValue<string>("jwt-audience"),
+            ValidIssuer = jwtValidationOptions.Value.Issuer,
+            ValidAudience = jwtValidationOptions.Value.Audience,
         });
 
         Assert.That(validationResult.IsValid, Is.True);

@@ -3,18 +3,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using PMS.Server.Options;
+using Microsoft.Extensions.Options;
 
 namespace PMS.Server.Services;
 
 public sealed class JwtGeneratorService : IJwtGeneratorService
 {
-    public JwtGeneratorService(IConfiguration configuration)
+    public JwtGeneratorService(IOptions<JwtValidationOptions> validationOptions)
     {
-        // NOTE: If we got here, we already know that these configuration values exist
-        // FIXME: Have an IOptions<JwtOptions> injected
-        issuer = configuration.GetValue<string>("jwt-issuer")!;
-        audience = configuration.GetValue<string>("jwt-audience")!;
-        secret = configuration.GetValue<string>("jwt-secret")!;
+        issuer = validationOptions.Value.Issuer;
+        audience = validationOptions.Value.Audience;
+        secret = validationOptions.Value.Secret;
     }
 
     public string Generate(UserModel user)

@@ -27,6 +27,6 @@ internal class GrpcWebApplicationFactory<TProgram>(string _connectionString, str
         builder.UseEnvironment("Testing");
 
         Environment.SetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection", _connectionString);
-        Environment.SetEnvironmentVariable("jwt-secret", _jwtSecret);
+        Environment.SetEnvironmentVariable("JwtValidationOptions__Secret", _jwtSecret);
     }
 }
